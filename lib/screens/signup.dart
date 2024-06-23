@@ -1,8 +1,8 @@
+import 'dart:convert';
+
 import 'package:chat_app/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
-
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -104,35 +104,37 @@ class SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
-  Future<void> signup() async {
-            print('test');
 
-    final url = Uri.parse('http://localhost:8080/signup'); // Replace with your server URL
-    final signupData = {
-      'username': _usernameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'password': _confirmPasswordController.text.trim(),
-    };
+Future<void> signup() async {
+  final url = Uri.parse('http://localhost:8080/signup');
+  
+  // Prepare data to send as JSON
+  final signupData = jsonEncode({
+    'username': _usernameController.text.trim(),
+    'email': _emailController.text.trim(),
+    'password': _passwordController.text.trim(),
+  });
 
-    try {
-      final response = await http.post(
-        url,
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(signupData),
-      );
+  try {
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: signupData, // Pass the JSON-encoded string here
+    );
 
-      if (response.statusCode == 200) {
-        print('Signup successful');
-        // Handle successful signup
-      } else {
-        print('Signup failed with status: ${response.statusCode}');
-        // Handle signup failure
-      }
-    } catch (e) {
-      print('Failed to connect to server: $e');
-      // Handle connection error
+    if (response.statusCode == 200) {
+      print('Signup successful');
+      // Handle successful signup
+    } else {
+      print('Signup failed with status: ${response.statusCode}');
+      // Handle signup failure
     }
+  } catch (e) {
+    print('Failed to connect to server: $e');
+    // Handle connection error
   }
+}
+
 }
