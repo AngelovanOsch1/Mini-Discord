@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:chat_app/screens/home.dart';
 import 'package:chat_app/screens/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 class SignupScreen extends StatefulWidget {
@@ -16,6 +18,20 @@ class SignupScreenState extends State<SignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _storage = const FlutterSecureStorage();
+
+  bool _passwordVisible = true;
+  bool _confirmPasswordVisible = true;
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,76 +44,123 @@ class SignupScreenState extends State<SignupScreen> {
           padding: const EdgeInsets.all(20.0),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 600),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    labelStyle: TextStyle(color: Colors.white),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextFormField(
+                    controller: _usernameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Username',
+                      labelStyle: TextStyle(color: Colors.white),
+                    ),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                const SizedBox(height: 12.0),
-                TextField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    labelStyle: TextStyle(color: Colors.white),
+                  const SizedBox(height: 12.0),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: Colors.white),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required';
+                      }
+                      return null;
+                    },
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 12.0),
-                TextField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Password',
-                    labelStyle: TextStyle(color: Colors.white),
-                  ),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 12.0),
-                TextField(
-                  controller: _confirmPasswordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Confirm Password',
-                    labelStyle: TextStyle(color: Colors.white),
-                  ),
-                  obscureText: true,
-                ),
-                const SizedBox(height: 20.0),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) => const LoginScreen(),
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          return FadeTransition(
-                            opacity: animation,
-                            child: child,
+                  const SizedBox(height: 12.0),
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      suffixIcon: IconButton(
+                        icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          setState(
+                            () {
+                              _passwordVisible = !_passwordVisible;
+                            },
                           );
                         },
                       ),
-                    );
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
-                    overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                    ),
+                    obscureText: _passwordVisible,
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required';
+                      }
+                      return null;
+                    },
                   ),
-                  child: const Text(
-                    'Do you already have an account?',
-                    style: TextStyle(fontSize: 16.0, color: Colors.white, decoration: TextDecoration.underline),
+                  const SizedBox(height: 12.0),
+                  TextFormField(
+                    controller: _confirmPasswordController,
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      labelStyle: const TextStyle(color: Colors.white),
+                      suffixIcon: IconButton(
+                        icon: Icon(_confirmPasswordVisible ? Icons.visibility : Icons.visibility_off),
+                        onPressed: () {
+                          setState(
+                            () {
+                              _confirmPasswordVisible = !_confirmPasswordVisible;
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    obscureText: _confirmPasswordVisible,
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'This field is required';
+                      }
+                      return null;
+                    },
                   ),
-                ),
-                const SizedBox(height: 12.0),
-                ElevatedButton(
-                  onPressed: () {
-                    signup();
-                  },
-                  child: const Text('Sign up'),
-                ),
-              ],
+                  const SizedBox(height: 20.0),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) => const LoginScreen(),
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: child,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                      overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+                    ),
+                    child: const Text(
+                      'Do you already have an account?',
+                      style: TextStyle(fontSize: 16.0, color: Colors.white, decoration: TextDecoration.underline),
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      signup();
+                    },
+                    child: const Text('Sign up'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -105,36 +168,65 @@ class SignupScreenState extends State<SignupScreen> {
     );
   }
 
-Future<void> signup() async {
-  final url = Uri.parse('http://localhost:8080/signup');
-  
-  // Prepare data to send as JSON
-  final signupData = jsonEncode({
-    'username': _usernameController.text.trim(),
-    'email': _emailController.text.trim(),
-    'password': _passwordController.text.trim(),
-  });
+  Future<void> signup() async {
 
-  try {
-    final response = await http.post(
-      url,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: signupData, // Pass the JSON-encoded string here
-    );
-
-    if (response.statusCode == 200) {
-      print('Signup successful');
-      // Handle successful signup
-    } else {
-      print('Signup failed with status: ${response.statusCode}');
-      // Handle signup failure
+    if (!_formKey.currentState!.validate()) {
+      return;
     }
-  } catch (e) {
-    print('Failed to connect to server: $e');
-    // Handle connection error
-  }
-}
 
+    final String username = _usernameController.text.trim();
+    final String email = _usernameController.text.trim();
+    final String password = _passwordController.text.trim();
+    final String confirmPassword = _confirmPasswordController.text.trim();
+
+    if (password != confirmPassword) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Passwords do not match'),
+        ),
+      );
+      return;
+    }
+
+    try {
+      final url = Uri.parse('http://localhost:8080/signup');
+    
+      final signupData = jsonEncode({
+        'username': username,
+        'email': email,
+        'password': password,
+      });
+
+      final response = await http.post(
+        url,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: signupData,
+      );
+
+      if (response.statusCode == 200) {        
+        final token = jsonDecode(response.body);
+        await _storage.write(key: 'jwt', value: token); 
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) =>  const Home()),
+          );
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context ).showSnackBar(
+            SnackBar(content: Text('Signup failed: ${response.body}')),
+          );        
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context ).showSnackBar(
+          const SnackBar(content: Text('Something went wrong!')),
+        );        
+      }
+    }
+  }
 }
