@@ -1,5 +1,6 @@
 import 'package:chat_app/models/user.dart';
 import 'package:chat_app/services/user_service.dart';
+import 'package:chat_app/token_storage.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -42,6 +43,10 @@ class _HomeState extends State<Home> {
                 return ListTile(
                   title: Text(user.username),
                   subtitle: Text(user.email),
+                  onTap: () => {
+                    print('YES'),
+                    TokenStorage.clearTokens()
+                  },
                 );
               },
             );
