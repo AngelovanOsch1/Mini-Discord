@@ -3,14 +3,14 @@ import 'package:chat_app/services/user_service.dart';
 import 'package:chat_app/token_storage.dart';
 import 'package:flutter/material.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeScreenState extends State<HomeScreen> {
 
   late Future<List<User>> futureUsers;
 
@@ -22,37 +22,54 @@ class _HomeState extends State<Home> {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('User List'),
+    return AlertDialog(
+      backgroundColor: Colors.amber,
+      contentPadding: const EdgeInsets.only(bottom: 50),
+      title: Text(
+        'test',
+        style: null,
       ),
-      body: FutureBuilder<List<User>>(
-        future: futureUsers,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No users found'));
-          } else {
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                User user = snapshot.data![index];
-                return ListTile(
-                  title: Text(user.username),
-                  subtitle: Text(user.email),
-                  onTap: () => {
-                    print('YES'),
-                    TokenStorage.clearTokens()
-                  },
-                );
-              },
-            );
-          }
-        },
+      content: SizedBox(
+        height: 400,
+        width: 350,
+        child: Column(
+          children: [
+            Flexible(
+              child: test(context),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget test(BuildContext context) {
+    return FutureBuilder<List<User>>(
+      future: futureUsers,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No users found'));
+        } else {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              User user = snapshot.data![index];
+              return ListTile(
+                title: Text(user.username),
+                subtitle: Text(user.email),
+                onTap: () {
+                  print('YES');
+                  TokenStorage.clearTokens();
+                },
+              );
+            },
+          );
+        }
+      },
     );
   }
 }

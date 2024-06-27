@@ -159,7 +159,7 @@ class LoginScreenState extends State<LoginScreen> {
         if (context.mounted) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) =>  const Home()),
+            MaterialPageRoute(builder: (context) =>  const HomeScreen()),
           );
         }
       } else {
