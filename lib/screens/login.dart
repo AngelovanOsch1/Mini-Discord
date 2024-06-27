@@ -147,8 +147,15 @@ class LoginScreenState extends State<LoginScreen> {
       );
 
       if (response.statusCode == 200) {
-        final token = jsonDecode(response.body);
-        await _storage.write(key: 'jwt', value: token); 
+        final body = jsonDecode(response.body);
+        final accessToken = body['access_token'];
+        final refreshToken = body['refresh_token'];
+        print(accessToken);
+        print(refreshToken);
+
+        await _storage.write(key: 'access_token', value: accessToken);
+        await _storage.write(key: 'refresh_token', value: refreshToken);
+
         if (context.mounted) {
           Navigator.push(
             context,

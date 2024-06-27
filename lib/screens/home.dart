@@ -23,17 +23,17 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: const Text('User List'),
       ),
       body: FutureBuilder<List<User>>(
         future: futureUsers,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No users found'));
+            return const Center(child: Text('No users found'));
           } else {
             return ListView.builder(
               itemCount: snapshot.data!.length,

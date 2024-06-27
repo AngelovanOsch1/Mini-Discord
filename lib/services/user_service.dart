@@ -8,7 +8,7 @@ class UserService {
   final _storage = const FlutterSecureStorage();
 
   Future<List<User>> fetchUsers() async {
-    final token = await _storage.read(key: 'jwt');
+    final token = await _storage.read(key: 'access_token');
 
     final response = await http.get(
       Uri.parse(apiUrl),
