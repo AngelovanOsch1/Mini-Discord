@@ -1,17 +1,17 @@
 import 'package:chat_app/services/user_service.dart';
 import 'package:flutter/material.dart';
 
-import '../models/user.dart';
+import '../models/user_model.dart';
 
-class AddFriends extends StatefulWidget {
-  const AddFriends({super.key});
+class AddUser extends StatefulWidget {
+  const AddUser({super.key});
 
   @override
-  State<AddFriends> createState() => _AddFriendsState();
+  State<AddUser> createState() => _AddUserState();
 }
 
-class _AddFriendsState extends State<AddFriends> {
-    late Future<List<User>> futureUsers;
+class _AddUserState extends State<AddUser> {
+    late Future<List<UserModel>> futureUsers;
 
   @override
   void initState() {
@@ -41,7 +41,7 @@ class _AddFriendsState extends State<AddFriends> {
     );
   }
    Widget test(BuildContext context) {
-    return FutureBuilder<List<User>>(
+    return FutureBuilder<List<UserModel>>(
       future: futureUsers,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -54,7 +54,7 @@ class _AddFriendsState extends State<AddFriends> {
           return ListView.builder(
             itemCount: snapshot.data!.length,
             itemBuilder: (context, index) {
-              User user = snapshot.data![index];
+              UserModel user = snapshot.data![index];
               return ListTile(
                 title: Text(user.username),
                 subtitle: Text(user.email),
