@@ -46,7 +46,7 @@ class LoginScreenState extends State<LoginScreen> {
                   TextFormField(
                     controller: _usernameController,
                     decoration: const InputDecoration(
-                      labelText: 'Email',
+                      labelText: 'Username',
                       labelStyle: TextStyle(color: Colors.white),
                     ),
                     keyboardType: TextInputType.emailAddress,
@@ -150,9 +150,7 @@ class LoginScreenState extends State<LoginScreen> {
         final body = jsonDecode(response.body);
         final accessToken = body['access_token'];
         final refreshToken = body['refresh_token'];
-        print(accessToken);
-        print(refreshToken);
-
+        
         await _storage.write(key: 'access_token', value: accessToken);
         await _storage.write(key: 'refresh_token', value: refreshToken);
 
