@@ -4,40 +4,38 @@ import 'package:flutter/material.dart';
 
 final ThemeData themeData = ThemeData(
   fontFamily: 'interFontFamily',
-  scaffoldBackgroundColor: const Color(0xFF36393F), // Discord dark theme background color
-  appBarTheme: const AppBarTheme(color: Color(0xFF36393F), elevation: 0),
   inputDecorationTheme: const InputDecorationTheme(
     errorMaxLines: 2,
-    labelStyle: TextStyle(color: Color(0xFFFFFFFF)), // White text color
-    hintStyle: TextStyle(color: Color(0xFFFFFFFF)), // White text color
+    labelStyle: TextStyle(color: Color(0xFFFFFFFF)),
+    hintStyle: TextStyle(color: Color(0xFFFFFFFF)),
     border: OutlineInputBorder(),
     enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFF72767D)), // Discord's border color
+      borderSide: BorderSide(color: Color(0xFF72767D)),
     ),
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFF7289DA)), // Discord's focus border color
+      borderSide: BorderSide(color: Color(0xFF7289DA)),
     ),
   ),
   colorScheme: const ColorScheme.dark(
-    primary: Color(0xFF7289DA), // Discord's primary color
-    onPrimary: Color(0xFFFFFFFF), // White text color
-    secondary: Color(0xFF805600), // Your original secondary color
-    onSecondary: Color(0xFFFFFFFF), // White text color
-    background: Color(0xFF36393F), // Discord dark theme background color
-    onBackground: Color(0xFF9A9A9A), // Discord's text color for UI elements
-    surface: Color(0xFF2F3136), // Discord's surface color
-    onSurface: Color(0xFFFFFFFF), // White text color
-    error: Color(0xFFBA1A1A), // Your original error color
-    onError: Color(0xFFFFFFFF), // White text color
+    primary: Color(0xFF7289DA),
+    onPrimary: Color(0xFFFFFFFF),
+    secondary: Color(0xFF805600),
+    onSecondary: Color(0xFFFFFFFF),
+    background: Color(0xFF36393F),
+    onBackground: Color(0xFF9A9A9A),
+    surface: Color(0xFF2F3136),
+    onSurface: Color(0xFFFFFFFF),
+    error: Color(0xFFBA1A1A),
+    onError: Color(0xFFFFFFFF),
   ),
   snackBarTheme: const SnackBarThemeData(
-    backgroundColor: Color(0xFF7289DA), // Discord's snackbar background color
+    backgroundColor: Color(0xFF7289DA),
     insetPadding: EdgeInsets.only(left: 30),
   ),
   textButtonTheme: TextButtonThemeData(
     style: ButtonStyle(
       backgroundColor: MaterialStateProperty.resolveWith(
-          (states) => const Color(0xFF7289DA)), // Discord's primary color
+          (states) => const Color(0xFF7289DA)),
       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
@@ -45,14 +43,14 @@ final ThemeData themeData = ThemeData(
       ),
       textStyle: MaterialStateProperty.all<TextStyle>(
         const TextStyle(
-          color: Color(0xFFFFFFFF), // White text color
-          fontSize: 24, // Adjust as needed
-          fontWeight: FontWeight.bold, // Adjust as needed
+          color: Color(0xFFFFFFFF),
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
         ),
       ),
     ),
   ),
-  dividerColor: const Color(0xFF4F545C), // Discord's divider color
+  dividerColor: const Color(0xFF4F545C),
 );
 
 const TextTheme textTheme = TextTheme(
@@ -60,15 +58,15 @@ const TextTheme textTheme = TextTheme(
     color: Colors.white,
     fontSize: 30,
     fontWeight: FontWeight.w900,
-  ), // Placeholder, adjust as per your design
+  ),
   headlineMedium: TextStyle(
     color: Colors.white,
     fontSize: 18,
     fontWeight: FontWeight.w700,
-  ), // Placeholder, adjust as per your design
+  ),
   headlineSmall: TextStyle(
     color: Colors.white,
     fontSize: 12,
     fontWeight: FontWeight.w400,
-  ), // Placeholder, adjust as per your design
+  ),
 );

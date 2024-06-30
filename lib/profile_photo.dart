@@ -37,19 +37,19 @@ class ProfilePhoto extends StatelessWidget {
       case 'myProfilePhoto':
         coverHeight = 150;
         profileHeight = 144;
-        fontSize = 100;
+        fontSize = 75;
         isOnlineWidth = 20;
         isOnlineHeight = 20;
         isOnlinex = 0.6;
         isOnliney = 0.8;
         break;
-      case 'chatScreen':
+      case 'chatScreenPhoto':
         coverHeight = 100;
         profileHeight = 54;
-        fontSize = 30;
+        fontSize = 25;
         isOnlineWidth = 15;
         isOnlineHeight = 15;
-        isOnlinex = 0.5;
+        isOnlinex = 0.6;
         isOnliney = 0.7;
         break;
     }
@@ -63,12 +63,13 @@ class ProfilePhoto extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(
                 width: 10,
+                color: Colors.grey.shade800
               ),
             ),
             child: SizedBox(
               child: CircleAvatar(
                 radius: profileHeight / 2,
-                backgroundColor: Colors.grey.shade800,
+                backgroundColor: Colors.grey.shade900,
                 child: profilePhoto?.isEmpty ?? true
                     ? Text(
                         username[0],

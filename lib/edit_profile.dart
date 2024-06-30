@@ -1,64 +1,42 @@
 import 'dart:io';
 
-import 'package:chat_app/chat_screen.dart';
-import 'package:chat_app/friends_list.dart';
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/profile_photo.dart';
-import 'package:chat_app/screens/add_user.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+// ignore: must_be_immutable
+class EditProfile extends StatefulWidget {
+  File? profilePhoto;
+  File? banner;
+
+  EditProfile(
+    this.profilePhoto,
+    this.banner, {
+    super.key,
+  });
+
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<EditProfile> createState() => _EditProfileState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _EditProfileState extends State<EditProfile> {
   final UserModel userModel = UserModel(id: 5, username: 'Angelo', email: 'Angelo.van.osch@hotmail.com', isOnline: true);
   final double coverHeight = 150;
   final double profileHeight = 144;
 
-  File? _profilePhoto;
-  File? _banner;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(  
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return const AddUser();
-            },
-          );
-        },
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: const Icon(
-          Icons.add,
-          size: 40,
-          color: Colors.grey,
-        ),
-      ),
-      body: const Row(children: [
-        FriendsList(),
-        Expanded(child: ChatScreen())
-      ],),
-    );
+    return Container( child: bannerAndProfilePhoto(userModel),);
   }
-
-  Widget bannerAndProfilePhoto(UserModel userModel) {
+    Widget bannerAndProfilePhoto(UserModel userModel) {
 
     final top = coverHeight - profileHeight / 2;
     final bottom = profileHeight / 2;
   return Stack(
     clipBehavior: Clip.none,
-    alignment: Alignment.center,
+    alignment: Alignment.topCenter,
     children: [
       Container(
         margin: EdgeInsets.only(bottom: bottom),
@@ -75,14 +53,14 @@ class _HomeScreenState extends State<HomeScreen> {
 Widget banner(UserModel userModel) {
   return Stack(
     children: [
-      userModel.banner?.isEmpty ?? true && _banner == null
+      userModel.banner?.isEmpty ?? true && widget.banner == null
           ? Container(
               color: Colors.grey,
               width: double.infinity,
               height: coverHeight,
             )
           : Container(
-              child: _banner == null
+              child: widget.banner == null
                   ? Image.network(
                       userModel.banner ?? 'https://wallpapers.com/images/high/plain-black-with-small-holes-qjgwc84puvsumykc.webp',
                       width: double.infinity,
@@ -90,7 +68,7 @@ Widget banner(UserModel userModel) {
                       fit: BoxFit.cover,
                     )
                   : Image.file(
-                      _banner!,
+                      widget.banner!,
                       width: double.infinity,
                       height: coverHeight,
                       fit: BoxFit.cover,
@@ -98,11 +76,12 @@ Widget banner(UserModel userModel) {
             ),
       Positioned(
         top: 0,
-        right: 20,
+        right: 10,
         child: Container(
           width: 30,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
+            color: Theme.of(context).colorScheme.primary,
           ),
           child: IconButton(
             onPressed: () {
@@ -126,7 +105,7 @@ Future<void> _pickBannerPhoto(ImageSource source) async {
   setState(
     () {
       if (pickedFile != null) {
-        _banner = File(pickedFile.path);
+        widget.banner = File(pickedFile.path);
       }
     },
   );
@@ -136,22 +115,16 @@ Widget profilePhoto(UserModel userModel) {
   return Stack(
     children: [
       Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            width: 10,
-          ),
-        ),
-        child: userModel.profilePhoto?.isEmpty ?? true && _profilePhoto == null
+        child: userModel.profilePhoto?.isEmpty ?? true && widget.profilePhoto == null
             ? ProfilePhoto(userModel.profilePhoto, userModel.username, userModel.isOnline, 'myProfilePhoto')
             : ClipOval(
-                child: _profilePhoto == null
+                child: widget.profilePhoto == null
                     ? ProfilePhoto(userModel.profilePhoto, userModel.username, userModel.isOnline, 'myProfilePhoto')
                     : CircleAvatar(
                         radius: profileHeight / 2,
                         backgroundColor: Colors.grey.shade800,
                         child: Image.file(
-                          _profilePhoto!,
+                          widget.profilePhoto!,
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: coverHeight,
@@ -160,12 +133,13 @@ Widget profilePhoto(UserModel userModel) {
               ),
       ),
       Positioned(
-        top: 100,
-        right: 10,
+        top: 90,
+        right: 5,
         child: Container(
           width: 30,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             shape: BoxShape.circle,
+            color: Theme.of(context).colorScheme.primary,
           ),
           child: IconButton(
             onPressed: () {
@@ -189,9 +163,10 @@ Future<void> _pickProfilePhoto(ImageSource source) async {
   setState(
     () {
       if (pickedFile != null) {
-        _profilePhoto = File(pickedFile.path);
+        widget.profilePhoto = File(pickedFile.path);
       }
     },
   );
 }
+
 }
