@@ -52,7 +52,7 @@ class _FriendsListState extends State<FriendsList> {
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.only(left: 10),
-                child: Align(alignment: Alignment.topLeft, child: IconButton(onPressed: () => {}, icon: const Icon(Icons.logout, color: Colors.red, size: 40,),),),
+                child: Align(alignment: Alignment.topLeft, child: IconButton(onPressed: () => {}, icon: const Icon(Icons.logout, color: Colors.red, size: 20,),),),
               )
             ],
           ),
