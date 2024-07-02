@@ -1,30 +1,31 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/profile_photo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+
 
 // ignore: must_be_immutable
 class EditProfile extends StatefulWidget {
-  File? profilePhoto;
-  File? banner;
-
-  EditProfile(
-    this.profilePhoto,
-    this.banner, {
-    super.key,
-  });
-
 
   @override
   State<EditProfile> createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
-  final UserModel userModel = UserModel(id: 5, username: 'Angelo', email: 'Angelo.van.osch@hotmail.com', isOnline: true);
+  final UserModel userModel = UserModel(id: 5, username: 'Angelo', email: 'Angelo.van.osch@hotmail.com', isOnline: true, role: 'User');
   final double coverHeight = 150;
   final double profileHeight = 144;
+  File? _profilePhoto;
+  File? _banner;
+  XFile? _uploadedProfilePhoto;
+  final _storage = const FlutterSecureStorage();
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +47,16 @@ class _EditProfileState extends State<EditProfile> {
         top: top,
         child: profilePhoto(userModel),
       ),
+      Padding(
+              padding: const EdgeInsets.only(top: 30),
+              child: TextButton(
+                onPressed: () async {
+                  saveProfile();
+                },
+                child: const Text('Save', style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
     ],
   );
 }
@@ -53,14 +64,14 @@ class _EditProfileState extends State<EditProfile> {
 Widget banner(UserModel userModel) {
   return Stack(
     children: [
-      userModel.banner?.isEmpty ?? true && widget.banner == null
+      userModel.banner?.isEmpty ?? true && _banner == null
           ? Container(
               color: Colors.grey,
               width: double.infinity,
               height: coverHeight,
             )
           : Container(
-              child: widget.banner == null
+              child: _banner == null
                   ? Image.network(
                       userModel.banner ?? 'https://wallpapers.com/images/high/plain-black-with-small-holes-qjgwc84puvsumykc.webp',
                       width: double.infinity,
@@ -68,7 +79,7 @@ Widget banner(UserModel userModel) {
                       fit: BoxFit.cover,
                     )
                   : Image.file(
-                      widget.banner!,
+                      _banner!,
                       width: double.infinity,
                       height: coverHeight,
                       fit: BoxFit.cover,
@@ -100,12 +111,12 @@ Widget banner(UserModel userModel) {
 }
 
 Future<void> _pickBannerPhoto(ImageSource source) async {
-  final pickedFile = await ImagePicker().pickImage(source: source);
+  final test = await ImagePicker().pickImage(source: source);
 
   setState(
     () {
-      if (pickedFile != null) {
-        widget.banner = File(pickedFile.path);
+      if (test != null) {
+        _banner = File(test.path);
       }
     },
   );
@@ -115,16 +126,16 @@ Widget profilePhoto(UserModel userModel) {
   return Stack(
     children: [
       Container(
-        child: userModel.profilePhoto?.isEmpty ?? true && widget.profilePhoto == null
+        child: userModel.profilePhoto?.isEmpty ?? true && _profilePhoto == null
             ? ProfilePhoto(userModel.profilePhoto, userModel.username, userModel.isOnline, 'myProfilePhoto')
             : ClipOval(
-                child: widget.profilePhoto == null
+                child: _profilePhoto == null
                     ? ProfilePhoto(userModel.profilePhoto, userModel.username, userModel.isOnline, 'myProfilePhoto')
                     : CircleAvatar(
                         radius: profileHeight / 2,
                         backgroundColor: Colors.grey.shade800,
                         child: Image.file(
-                          widget.profilePhoto!,
+                          _profilePhoto!,
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: coverHeight,
@@ -157,16 +168,43 @@ Widget profilePhoto(UserModel userModel) {
   );
 }
 
-Future<void> _pickProfilePhoto(ImageSource source) async {
-  final pickedFile = await ImagePicker().pickImage(source: source);
+  Future<void> _pickProfilePhoto(ImageSource source) async {
+    _uploadedProfilePhoto = await ImagePicker().pickImage(source: source);
 
-  setState(
-    () {
-      if (pickedFile != null) {
-        widget.profilePhoto = File(pickedFile.path);
+    setState(
+      () {
+        if (_uploadedProfilePhoto != null) {
+          _profilePhoto = File(_uploadedProfilePhoto!.path);
+        }
+      },
+    );
+  }
+
+  Future<void> saveProfile() async {
+    final token = await _storage.read(key: 'access_token');
+    final Uri apiUrl = Uri.parse("http://127.0.0.1:8080/editProfile");
+    Uint8List bytes = await _uploadedProfilePhoto!.readAsBytes();
+
+    try {
+      final request = http.MultipartRequest("PUT", apiUrl);
+      final myFile = http.MultipartFile(
+        "file",
+        http.ByteStream.fromBytes(bytes),
+        bytes.length,
+        filename: _uploadedProfilePhoto!.name
+        );
+        request.files.add(myFile);
+        print(_uploadedProfilePhoto!.name);
+        request.headers['Authorization'] = 'Bearer $token';
+        final response = await request.send();
+        
+      if (response.statusCode == 200) {
+        print('File uploaded successfully');
+      } else {
+        print('Failed to upload file. Status code: ${response.statusCode}');
       }
-    },
-  );
-}
-
+    } catch (e) {
+      print('Error uploading file: $e');
+    }
+  }
 }

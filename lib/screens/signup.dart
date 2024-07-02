@@ -175,7 +175,7 @@ class SignupScreenState extends State<SignupScreen> {
     }
 
     final String username = _usernameController.text.trim();
-    final String email = _usernameController.text.trim();
+    final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
     final String confirmPassword = _confirmPasswordController.text.trim();
 

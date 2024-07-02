@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           final initialRoute = snapshot.hasData ? 'homeScreen' : 'loginScreen'; 
           return MaterialApp(
             theme: themeData,
-            initialRoute: initialRoute,
+            initialRoute: 'loginScreen',
             debugShowCheckedModeBanner: false,
             routes: {
               'signupScreen': (context) => const SignupScreen(),

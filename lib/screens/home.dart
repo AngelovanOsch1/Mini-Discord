@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final UserModel userModel = UserModel(id: 5, username: 'Angelo', email: 'Angelo.van.osch@hotmail.com', isOnline: true);
+  final UserModel userModel = UserModel(id: 5, username: 'Angelo', email: 'Angelo.van.osch@hotmail.com', isOnline: true, role: 'User');
   final double coverHeight = 150;
   final double profileHeight = 144;
 
@@ -35,14 +35,14 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           );
         },
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Icon(
           Icons.add,
           size: 40,
-          color: Colors.grey,
+          color: Colors.white,
         ),
       ),
       body: const Row(children: [
