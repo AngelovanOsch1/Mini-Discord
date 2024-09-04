@@ -1,27 +1,35 @@
 import 'package:chat_app/models/user_model.dart';
 import 'package:chat_app/profile_photo.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MyProfile extends StatefulWidget {
+class MyProfile extends ConsumerWidget {
   const MyProfile({super.key});
 
   @override
-  State<MyProfile> createState() => _MyProfileState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userModel = ref.watch(userModelProvider);
 
-class _MyProfileState extends State<MyProfile> {
-  final UserModel userModel = UserModel(id: 5, username: 'Angelo', email: 'Angelo.van.osch@hotmail.com', isOnline: true, role: 'User');
-
-  @override
-  Widget build(BuildContext context) {
+    if (userModel == null) {
+      return const Center(child: Text('Loading...'));
+    }
+    
     return Center(
-        child: Column(
-          children: [
-            ProfilePhoto(userModel.profilePhoto, userModel.username, userModel.isOnline, 'chatScreenPhoto'),
-            const SizedBox(height: 10,),
-            Text(userModel.username, style: const TextStyle(fontSize: 20),),
-          ],
-        ),
-      );
+      child: Column(
+        children: [
+          ProfilePhoto(
+            userModel.profilePhoto,
+            userModel.username,
+            userModel.isOnline,
+            'chatScreenPhoto'
+          ),
+          const SizedBox(height: 10),
+          Text(
+            userModel.username,
+            style: const TextStyle(fontSize: 20),
+          ),
+        ],
+      ),
+    );
   }
 }

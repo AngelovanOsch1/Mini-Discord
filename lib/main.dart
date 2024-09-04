@@ -4,10 +4,11 @@ import 'package:chat_app/screens/signup.dart';
 import 'package:chat_app/token_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
 void main() {
-  runApp(const MyApp());
+  runApp( const ProviderScope (child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

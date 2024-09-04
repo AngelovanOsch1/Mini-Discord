@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:chat_app/screens/signup.dart';
+import 'package:chat_app/models/user_model.dart'; // Import for UserModel
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
   @override
   LoginScreenState createState() => LoginScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -66,11 +68,9 @@ class LoginScreenState extends State<LoginScreen> {
                       suffixIcon: IconButton(
                         icon: Icon(_passwordVisible ? Icons.visibility : Icons.visibility_off),
                         onPressed: () {
-                          setState(
-                            () {
-                              _passwordVisible = !_passwordVisible;
-                            },
-                          );
+                          setState(() {
+                            _passwordVisible = !_passwordVisible;
+                          });
                         },
                       ),
                     ),
@@ -84,7 +84,7 @@ class LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
-                    onPressed: _login,
+                    onPressed: () => _login(ref), // Use ref from ConsumerState
                     child: const Text('Log In'),
                   ),
                   const SizedBox(height: 12.0),
@@ -120,9 +120,8 @@ class LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
-  Future<void> _login() async {
-
+  
+  Future<void> _login(WidgetRef ref) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -143,33 +142,37 @@ class LoginScreenState extends State<LoginScreen> {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: loginData
+        body: loginData,
       );
 
       if (response.statusCode == 200) {
         final body = jsonDecode(response.body);
         final accessToken = body['access_token'];
         final refreshToken = body['refresh_token'];
-        
+        final userModelJson = body['user_model'];
+
+        final userModel = UserModel.fromJson(userModelJson);
+        ref.read(userModelProvider.notifier).setUser(userModel);
+
         await _storage.write(key: 'access_token', value: accessToken);
         await _storage.write(key: 'refresh_token', value: refreshToken);
 
         if (context.mounted) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) =>  const HomeScreen()),
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
           );
         }
       } else {
         if (context.mounted) {
-          ScaffoldMessenger.of(context ).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Login failed: ${response.body}')),
           );        
         }
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context ).showSnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Something went wrong!')),
         );        
       }
